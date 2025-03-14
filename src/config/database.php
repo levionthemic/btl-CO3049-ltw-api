@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$dbname = 'shop';
+$dbname = 'room-rental';
 $username = "root";
 $password = "";
 try {
