@@ -10,6 +10,17 @@ class SettingsModel {
     }
 
     public function get() {
+        // $stmt = $this->conn->query("
+        // CREATE TABLE IF NOT EXISTS Setting (
+        //     id INT AUTO_INCREMENT PRIMARY KEY,
+        //     hotel_name VARCHAR(255) NOT NULL,
+        //     phone_number VARCHAR(20) NOT NULL,
+        //     address TEXT NOT NULL,
+        //     logo_path VARCHAR(255) DEFAULT NULL,
+        //     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        // );
+        // "); //In case the table is not created
+        
         $stmt = $this->conn->query("SELECT * FROM Setting LIMIT 1");
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -22,8 +33,8 @@ class SettingsModel {
     public function save($data) {
         try {
             $stmt = $this->conn->prepare("
-                INSERT INTO Setting (hotel_name, phone_number, address) 
-                VALUES (:hotel_name, :phone_number, :address)
+                INSERT INTO Setting (hotel_name, phone_number, address, logo_path) 
+                VALUES (:hotel_name, :phone_number, :address, :logo_path)
             ");
     
             $stmt->execute($data);

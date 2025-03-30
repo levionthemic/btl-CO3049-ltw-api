@@ -21,6 +21,9 @@ class SettingsController
     // Cho phép các headers
     header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
     
+    // Cho phép gửi credentials (cookies, authorization headers)
+    header('Access-Control-Allow-Credentials: true');
+    
     // Xử lý preflight request
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
       header('HTTP/1.1 200 OK');
@@ -51,9 +54,11 @@ class SettingsController
       $hotelName = $_POST['hotel_name'] ?? null;
       $phoneNumber = $_POST['phone_number'] ?? null;
       $address = $_POST['address'] ?? null;
+      $logo = $_FILES['logo'] ?? null;
 
       // Debug log
       error_log("Received data: " . print_r($_POST, true));
+      error_log("Received files: " . print_r($_FILES, true));
 
       // Kiểm tra các trường bắt buộc
       if (!$hotelName || !$phoneNumber || !$address) {
@@ -75,6 +80,28 @@ class SettingsController
         'phone_number' => $phoneNumber,
         'address' => $address
       ];
+
+      // Xử lý file logo
+      if ($logo && $logo['error'] === UPLOAD_ERR_OK) {
+        // Nếu có file mới được upload
+        $uploadDir = __DIR__ . '/../uploads/';
+        if (!file_exists($uploadDir)) {
+          mkdir($uploadDir, 0777, true);
+        }
+
+        $logoFileName = time() . '_' . basename($logo['name']);
+        $targetFile = $uploadDir . $logoFileName;
+
+        if (move_uploaded_file($logo['tmp_name'], $targetFile)) {
+          $settingsData['logo_path'] = $logoFileName;
+        }
+      } else {
+        // Nếu không có file mới, lấy logo hiện tại từ database
+        $currentSettings = $this->settingsModel->getLatest();
+        if (isset($currentSettings['logo_path'])) {
+          $settingsData['logo_path'] = $currentSettings['logo_path'];
+        }
+      }
 
       // Lưu vào database thông qua model
       $result = $this->settingsModel->save($settingsData);
