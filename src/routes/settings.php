@@ -21,6 +21,11 @@ function handleSettingsRoutes($uri, $method)
     return true;
   }
 
+  if ($uri === 'settings/latest' && $method === 'GET') {
+    $settingsController->getLatest();
+    return true;
+  }
+
 
 
   return false;

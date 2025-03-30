@@ -13,16 +13,13 @@ class SettingsController
   private function setupCORS()
   {
     // Cho phép từ domain cụ thể
-    header('Access-Control-Allow-Origin: http://localhost:5173');
+    header('Access-Control-Allow-Origin: *');
     
     // Cho phép các phương thức HTTP
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
     
     // Cho phép các headers
     header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-    
-    // Cho phép gửi credentials (cookies, authorization headers)
-    header('Access-Control-Allow-Credentials: true');
     
     // Xử lý preflight request
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -49,47 +46,34 @@ class SettingsController
       return;
     }
 
-    // Lấy dữ liệu từ form
-    $hotelName = $_POST['hotel_name'] ?? null;
-    $phoneNumber = $_POST['phone_number'] ?? null;
-    $address = $_POST['address'] ?? null;
-    $logo = $_FILES['logo'] ?? null;
-
-    // Kiểm tra các trường bắt buộc
-    if (!$hotelName || !$phoneNumber || !$address || !$logo) {
-      echo json_encode([
-        "status" => "error", 
-        "message" => "Missing required fields",
-        "details" => [
-          "hotel_name" => !$hotelName,
-          "phone_number" => !$phoneNumber,
-          "address" => !$address,
-          "logo" => !$logo
-        ]
-      ]);
-      return;
-    }
-
     try {
-      // Xử lý file logo
-      $uploadDir = __DIR__ . '/../uploads/';
-      if (!file_exists($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
-      }
+      // Lấy dữ liệu từ form
+      $hotelName = $_POST['hotel_name'] ?? null;
+      $phoneNumber = $_POST['phone_number'] ?? null;
+      $address = $_POST['address'] ?? null;
 
-      $logoFileName = time() . '_' . basename($logo['name']);
-      $targetFile = $uploadDir . $logoFileName;
+      // Debug log
+      error_log("Received data: " . print_r($_POST, true));
 
-      if (!move_uploaded_file($logo['tmp_name'], $targetFile)) {
-        throw new Exception("Failed to upload logo");
+      // Kiểm tra các trường bắt buộc
+      if (!$hotelName || !$phoneNumber || !$address) {
+        echo json_encode([
+          "status" => "error", 
+          "message" => "Missing required fields",
+          "details" => [
+            "hotel_name" => !$hotelName,
+            "phone_number" => !$phoneNumber,
+            "address" => !$address
+          ]
+        ]);
+        return;
       }
 
       // Chuẩn bị dữ liệu để lưu
       $settingsData = [
         'hotel_name' => $hotelName,
         'phone_number' => $phoneNumber,
-        'address' => $address,
-        'logo_path' => $logoFileName
+        'address' => $address
       ];
 
       // Lưu vào database thông qua model
@@ -106,6 +90,7 @@ class SettingsController
       }
 
     } catch (Exception $e) {
+      error_log("Error in saveSettings: " . $e->getMessage());
       echo json_encode([
         "status" => "error",
         "message" => $e->getMessage()
@@ -131,5 +116,10 @@ class SettingsController
         'name' => 'random',
         'value' => $randomNumber
     ]);
+  }
+
+  public function getLatest() {
+    header('Content-Type: application/json');
+    echo json_encode($this->settingsModel->getLatest());
   }
 }

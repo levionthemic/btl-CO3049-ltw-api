@@ -1,6 +1,6 @@
 
 <?php
-// TODO: Query the database and put the current data into the form
+// This file is not used, just for demonstrating MVC model
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,20 +31,6 @@
                 <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address:</label>
                 <textarea id="address" name="address" required 
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-32"><?php echo htmlspecialchars($currentSettings['address'] ?? ''); ?></textarea>
-            </div>
-
-            <div>
-                <label for="logo" class="block text-sm font-medium text-gray-700 mb-1">Logo:</label>
-                <?php if (isset($currentSettings['logo_path'])): ?>
-                    <div class="mb-2">
-                        <img src="/uploads/<?php echo htmlspecialchars($currentSettings['logo_path']); ?>" 
-                             alt="Current Logo" 
-                             class="max-w-xs rounded-lg shadow-sm">
-                    </div>
-                <?php endif; ?>
-                <input type="file" id="logo" name="logo" accept="image/*" 
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <p class="mt-1 text-sm text-gray-500">Leave empty to keep current logo</p>
             </div>
 
             <div class="flex justify-end">
