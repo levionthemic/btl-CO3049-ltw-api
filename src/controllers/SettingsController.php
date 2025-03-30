@@ -7,6 +7,28 @@ class SettingsController
   public function __construct()
   {
     $this->settingsModel = new SettingsModel();
+    $this->setupCORS();
+  }
+
+  private function setupCORS()
+  {
+    // Cho phép từ domain cụ thể
+    header('Access-Control-Allow-Origin: http://localhost:5173');
+    
+    // Cho phép các phương thức HTTP
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+    
+    // Cho phép các headers
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+    
+    // Cho phép gửi credentials (cookies, authorization headers)
+    header('Access-Control-Allow-Credentials: true');
+    
+    // Xử lý preflight request
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+      header('HTTP/1.1 200 OK');
+      exit();
+    }
   }
 
   public function showForm()
@@ -18,6 +40,9 @@ class SettingsController
 
   public function saveSettings()
   {
+    // Set header JSON cho API response
+    header('Content-Type: application/json');
+
     // Kiểm tra xem request có phải là POST không
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
       echo json_encode(["status" => "error", "message" => "Invalid request method"]);
@@ -71,8 +96,11 @@ class SettingsController
       $result = $this->settingsModel->save($settingsData);
 
       if ($result) {
-        header("Location: /../views/settings/success.php");
-        echo "Settings saved successfully";
+        echo json_encode([
+          "status" => "success",
+          "message" => "Settings saved successfully",
+          "data" => $settingsData
+        ]);
       } else {
         throw new Exception("Failed to save settings to database");
       }
@@ -88,5 +116,20 @@ class SettingsController
   public function showSuccess()
   {
     require_once __DIR__ . '/../views/settings/Success.php';
+  }
+
+  public function getRandom()
+  {
+    // Set header để trả về JSON
+    header('Content-Type: application/json');
+    
+    // Tạo số ngẫu nhiên
+    $randomNumber = rand(1, 100);
+    
+    // Trả về JSON response
+    echo json_encode([
+        'name' => 'random',
+        'value' => $randomNumber
+    ]);
   }
 }

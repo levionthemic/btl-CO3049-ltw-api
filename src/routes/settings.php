@@ -16,5 +16,12 @@ function handleSettingsRoutes($uri, $method)
     return true;
   }
 
+  if ($uri === 'settings/random' && $method === 'GET') {
+    $settingsController->getRandom();
+    return true;
+  }
+
+
+
   return false;
 }

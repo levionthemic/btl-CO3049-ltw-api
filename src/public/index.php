@@ -12,7 +12,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 if (strpos($uri, 'public/api/') == 0) { //Example url: localhost/public/api/settings
   $uri = substr($uri, strlen('public/api/'));
-  echo "Modified URI: $uri<br>";
+  // echo "Modified URI: $uri<br>";
 
   dispatch($uri, $method);
 } else {

@@ -8,7 +8,7 @@ require_once 'settings.php';
 function dispatch($uri, $method)
 {
 
-  echo "URI: $uri - Method: $method\n";
+  // echo "URI: $uri - Method: $method\n";
   // if (handleAuthRoutes($uri, $method)) return;
   // if (handleUserRoutes($uri, $method)) return;
   // if (handleTestRoutes()) return;
