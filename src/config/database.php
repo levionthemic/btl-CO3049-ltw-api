@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$dbname = 'room-rental';
+$dbname = 'room_rental'; //Change from room-rental to room_rental
 $username = "root";
 $password = "";
 try {
