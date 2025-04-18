@@ -1,6 +1,6 @@
 <?php
 
-class ApiError extends Error
+class ApiError extends Exception
 {
   private int $statusCode;
 
