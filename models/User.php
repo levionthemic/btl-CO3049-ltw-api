@@ -8,8 +8,7 @@ class User
 
   public function __construct()
   {
-    global $conn;
-    $this->conn = $conn;
+    $this->conn = Database::getInstance()->getConnection();
   }
 
   public function getAll()
@@ -30,5 +29,18 @@ class User
     $stmt = $this->conn->prepare("SELECT * FROM users WHERE id = ?");
     $stmt->execute([$id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
+  }
+
+  public function create($data)
+  {
+    $stmt = $this->conn->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
+
+    $result = $stmt->execute([$data['name'], $data['email'], $data['password']]);
+
+    if ($result) {
+      return $this->conn->lastInsertId();
+    } else {
+      return false;
+    }
   }
 }

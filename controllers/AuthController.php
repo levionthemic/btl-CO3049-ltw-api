@@ -14,18 +14,126 @@ class AuthController
 
   public function login()
   {
-    $input = json_decode(file_get_contents("php://input"), true);
-    if (!isset($input['email']) || !isset($input['password'])) {
-      echo json_encode(["status" => "error", "message" => "Missing parameters"]);
-      return;
-    }
+    header('Content-Type: application/json; charset=utf-8');
 
-    $response = $this->authService->login($input['email'], $input['password']);
-    echo json_encode($response);
+    try {
+      $input = json_decode(file_get_contents("php://input"), true);
+
+      if (!isset($input['email']) || !isset($input['password'])) {
+        throw new ApiError('Missing information', 406);
+      }
+
+      $response = $this->authService->login($input);
+
+      setcookie(
+        'accessToken',
+        $response['accessToken'],
+        [
+          'expires' => time() + 7 * 24 * 60 * 60,
+          'path' => '/',
+          'secure' => true,
+          'httponly' => true,
+          'samesite' => 'None'
+        ]
+      );
+
+      setcookie(
+        'refreshToken',
+        $response['refreshToken'],
+        [
+          'expires' => time() + 7 * 24 * 60 * 60,
+          'path' => '/',
+          'secure' => true,
+          'httponly' => true,
+          'samesite' => 'None'
+        ]
+      );
+
+      unset($response['accessToken']);
+      unset($response['refreshToken']);
+
+      echo json_encode(["status" => "success", "data" => $response]);
+    } catch (Exception $e) {
+      throw new Exception($e->getMessage());
+    }
   }
 
   public function register()
   {
-    echo json_encode(["message" => "Register function here"]);
+    header('Content-Type: application/json; charset=utf-8');
+
+    try {
+      $input = json_decode(file_get_contents("php://input"), true);
+
+      if (!isset($input['email']) || !isset($input['password']) || !isset($input['name'])) {
+        throw new ApiError('Missing information', 406);
+      }
+
+      $response = $this->authService->register($input);
+
+      echo json_encode(["status" => "success", "data" => $response]);
+    } catch (Exception $e) {
+      throw new Exception($e->getMessage());
+    }
+  }
+
+  public function logout()
+  {
+    try {
+      setcookie(
+        'accessToken',
+        '',
+        [
+          'expires' => time() - 1,
+          'path' => '/',
+          'secure' => true,
+          'httponly' => true,
+          'samesite' => 'None'
+        ]
+      );
+      setcookie(
+        'refreshToken',
+        '',
+        [
+          'expires' => time() - 1,
+          'path' => '/',
+          'secure' => true,
+          'httponly' => true,
+          'samesite' => 'None'
+        ]
+      );
+      unset($_COOKIE['accessToken']);
+      unset($_COOKIE['refreshToken']);
+
+      echo json_encode(["status" => "success"]);
+    } catch (Exception $e) {
+      throw new Exception($e->getMessage());
+    }
+  }
+
+  public function refreshToken()
+  {
+    try {
+      if (!isset($_COOKIE['refreshToken'])) {
+        throw new ApiError("Unauthorized! Please Login", 401);
+      }
+      $response = $this->authService->refreshToken($_COOKIE['refreshToken']);
+
+      setcookie(
+        'accessToken',
+        $response['accessToken'],
+        [
+          'expires' => time() + 7 * 24 * 60 * 60,
+          'path' => '/',
+          'secure' => true,
+          'httponly' => true,
+          'samesite' => 'None'
+        ]
+      );
+
+      echo json_encode(["status" => "success"]);
+    } catch (Exception $e) {
+      throw $e;
+    }
   }
 }

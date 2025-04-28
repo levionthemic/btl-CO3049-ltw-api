@@ -1,0 +1,12 @@
+{
+    "name": "levion/btl-co3049-ltw-api",
+    "require": {
+        "firebase/php-jwt": "^6.11"
+    },
+    "authors": [
+        {
+            "name": "levionthemic",
+            "email": "liem.levicoding834124@gmail.com"
+        }
+    ]
+}

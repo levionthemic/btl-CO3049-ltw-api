@@ -14,7 +14,6 @@ loadEnv();
 
 // Config CORS
 require_once './config/cors.php';
-echo json_encode(['1' => $_ENV['ALLOWED_ORIGINS']]);
 
 // Use API routes
 $method = $_SERVER['REQUEST_METHOD'];

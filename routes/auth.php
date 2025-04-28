@@ -6,13 +6,23 @@ function handleAuthRoutes($uri, $method)
 {
   $authController = new AuthController();
 
-  if ($uri === 'login' && $method === 'POST') {
+  if ($uri === '/auth/login' && $method === 'POST') {
     $authController->login();
     return true;
   }
 
-  if ($uri === 'register' && $method === 'POST') {
+  if ($uri === '/auth/register' && $method === 'POST') {
     $authController->register();
+    return true;
+  }
+
+  if ($uri === '/auth/logout' && $method === "DELETE") {
+    $authController->logout();
+    return true;
+  }
+
+  if ($uri === '/auth/refresh-token' && $method === 'GET') {
+    $authController->refreshToken();
     return true;
   }
 
