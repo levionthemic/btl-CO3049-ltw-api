@@ -6,14 +6,19 @@ function handleUserRoutes($uri, $method)
 {
   $userController = new UserController();
 
-  if ($uri === 'users' && $method === 'GET') {
-    $userController->getAllUsers();
-    return true;
-  }
+  // if ($uri === 'users' && $method === 'GET') {
+  //   $userController->getAllUsers();
+  //   return true;
+  // }
 
-  if (preg_match('/users\/(\d+)/', $uri, $matches) && $method === 'GET') {
-    $userId = $matches[1];
-    $userController->getUserById($userId);
+  // if (preg_match('/users\/(\d+)/', $uri, $matches) && $method === 'GET') {
+  //   $userId = $matches[1];
+  //   $userController->getUserById($userId);
+  //   return true;
+  // }
+
+  if ($uri === '/user/update' && $method === 'POST') {
+    $userController->updateUser();
     return true;
   }
 
