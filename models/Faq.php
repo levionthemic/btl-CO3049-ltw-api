@@ -19,9 +19,9 @@ class Faq
 
   public function createOne($data)
   {
-    $stmt = $this->conn->prepare("INSERT INTO faqs (question, answer) VALUES (?, ?)");
+    $stmt = $this->conn->prepare("INSERT INTO faqs (question, answer, status) VALUES (?, ?, ?)");
 
-    $result = $stmt->execute([$data['question'], $data['answer']]);
+    $result = $stmt->execute([$data['question'], $data['answer'], $data['status']]);
 
     if ($result) {
       return $this->conn->lastInsertId();
@@ -33,9 +33,9 @@ class Faq
 
   public function updateFaq($data)
   {
-    $stmt = $this->conn->prepare("UPDATE faqs SET question = ?, answer = ? WHERE id = ?");
+    $stmt = $this->conn->prepare("UPDATE faqs SET question = ?, answer = ?, status = ? WHERE id = ?");
 
-    $result = $stmt->execute([$data['question'], $data['answer'], $data['id']]);
+    $result = $stmt->execute([$data['question'], $data['answer'], $data['status'], $data['id']]);
 
     if ($result) {
       return true;

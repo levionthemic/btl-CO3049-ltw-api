@@ -28,7 +28,7 @@ class FaqController
     try {
       $input = json_decode(file_get_contents("php://input"), true);
 
-      if (!isset($input['question']) || !isset($input['answer'])) {
+      if (!isset($input['question']) || !isset($input['answer']) || !isset($input['status'])) {
         throw new ApiError('Missing information', 406);
       }
       
@@ -46,7 +46,7 @@ class FaqController
     try {
       $input = json_decode(file_get_contents("php://input"), true);
 
-      if (!isset($input['id']) || !isset($input['question']) || !isset($input['answer'])) {
+      if (!isset($input['id']) || !isset($input['question']) || !isset($input['answer']) || !isset($input['status'])) {
         throw new ApiError('Missing information', 406);
       }
 
