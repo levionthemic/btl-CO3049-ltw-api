@@ -43,4 +43,17 @@ class User
       return false;
     }
   }
+
+  public function updateUser($data)
+  {
+    $stmt = $this->conn->prepare("UPDATE users SET email = ?, name = ?, address = ?, phone = ? WHERE id = ?");
+
+    $result = $stmt->execute([$data['email'], $data['name'], $data['address'], $data['phone'], $data['id']]);
+
+    if ($result) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
