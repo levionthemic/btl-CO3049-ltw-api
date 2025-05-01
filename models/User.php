@@ -46,12 +46,18 @@ class User
 
   public function updateUser($data)
   {
-    $stmt = $this->conn->prepare("UPDATE users SET email = ?, name = ?, address = ?, phone = ? WHERE id = ?");
+    if (!isset($data['avatar'])) {
+      $stmt = $this->conn->prepare("UPDATE users SET email = ?, name = ?, address = ?, phone = ? WHERE id = ?");
 
-    $result = $stmt->execute([$data['email'], $data['name'], $data['address'], $data['phone'], $data['id']]);
+      $result = $stmt->execute([$data['email'], $data['name'], $data['address'], $data['phone'], $data['id']]);
+    } else {
+      $stmt = $this->conn->prepare("UPDATE users SET avatar = ? WHERE id = ?");
+
+      $result = $stmt->execute([$data['avatar'], $data['id']]);
+    }
 
     if ($result) {
-      return true;
+      return $this->findById($data['id']);
     } else {
       return false;
     }

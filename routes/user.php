@@ -17,7 +17,7 @@ function handleUserRoutes($uri, $method)
   //   return true;
   // }
 
-  if ($uri === '/user/update' && $method === 'PUT') {
+  if ($uri === '/user/update' && $method === 'POST') {
     $userController->updateUser();
     return true;
   }
