@@ -1,6 +1,16 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 
+// CREATE TABLE contacts (
+//     id INT AUTO_INCREMENT PRIMARY KEY,
+//     name VARCHAR(255) NOT NULL,     
+//     email VARCHAR(255) NOT NULL,       
+//     message TEXT NOT NULL,  
+//     status ENUM('unread', 'read', 'responded') DEFAULT 'unread',
+//     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+//     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
+// );
+
 class ContactsModel
 {
     private $conn;
@@ -65,6 +75,22 @@ class ContactsModel
     {
         $stmt = $this->conn->prepare("DELETE FROM contacts WHERE id = ?");
         return $stmt->execute([$id]);
+    }
+
+    public function getPaginatedContacts($page, $limit)
+    {
+        $offset = ($page - 1) * $limit;
+        $stmt = $this->conn->prepare("SELECT * FROM contacts ORDER BY created_at DESC LIMIT :limit OFFSET :offset");
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTotalContactsCount()
+    {
+        $stmt = $this->conn->query("SELECT COUNT(*) FROM contacts");
+        return $stmt->fetchColumn();
     }
 }
 ?>

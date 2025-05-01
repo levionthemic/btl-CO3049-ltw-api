@@ -7,8 +7,19 @@ function handleContactsRoutes($uri, $method)
     $contactsController = new ContactsController();
 
     // Routing for contacts
-    if ($uri === 'contacts' && $method === 'GET') {
-        $contactsController->getAllContacts();
+    if (strpos($uri, 'contacts') === 0 && $method === 'GET') {
+
+        $queryParams = [];
+        parse_str(parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY), $queryParams);
+        if (isset($queryParams['page']) && isset($queryParams['limit'])) {
+            $page = (int)$queryParams['page'];
+            $limit = (int)$queryParams['limit'];
+            $contactsController->getPaginatedContacts($page, $limit);
+        }
+        else {
+            $contactsController->getAllContacts();
+        }
+        // $contactsController->getAllContacts();
         return true;
     }
 
@@ -51,6 +62,14 @@ function handleContactsRoutes($uri, $method)
             return true;
         }
     }
+
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Invalid request',
+        'uri' => $uri,
+        'method' => $method
+    ]);
+    http_response_code(404);
 
     return false;
 }

@@ -80,4 +80,16 @@ class ContactsController
     $result = $this->contactsModel->markAsResponded($id);
     echo json_encode($result);
   }
+
+  public function getPaginatedContacts($page, $limit)
+  {
+    $result = $this->contactsModel->getPaginatedContacts($page, $limit);
+    $totalContacts = $this->contactsModel->getTotalContactsCount();
+    echo json_encode([
+      'contacts' => $result,
+      'total_contacts' => $totalContacts,
+      'current_page' => $page,
+      'total_pages' => ceil($totalContacts / $limit)
+    ]);
+  }
 }
