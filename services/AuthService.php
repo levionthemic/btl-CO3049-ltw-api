@@ -16,8 +16,16 @@ class AuthService
   {
     try {
       $user = $this->userModel->findOneByEmail($data['email']);
-      if (!$user || !password_verify($data['password'], $user['password'])) {
-        throw new ApiError("Incorrect email or password", 403);
+      if (!$user) {
+        throw new ApiError("Account not existed!", 403);
+      }
+
+      if ($user['status'] == 'inactive') {
+        throw new ApiError("Your account had been locked!", 403);
+      }
+
+      if (!password_verify($data['password'], $user['password'])) {
+        throw new ApiError("Incorrect password!", 403);
       }
 
       $userInfo = [
