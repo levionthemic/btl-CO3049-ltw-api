@@ -17,8 +17,7 @@ class ContactsModel
 
     public function __construct()
     {
-        global $conn; // Use the existing PDO connection from database.php
-        $this->conn = $conn;
+        $this->conn = Database::getInstance()->getConnection();
     }
 
     // Get all contacts
@@ -92,5 +91,6 @@ class ContactsModel
         $stmt = $this->conn->query("SELECT COUNT(*) FROM contacts");
         return $stmt->fetchColumn();
     }
+
 }
 ?>

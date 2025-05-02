@@ -80,4 +80,32 @@ class ContactsController
     $result = $this->contactsModel->markAsResponded($id);
     echo json_encode($result);
   }
+
+  public function getPaginatedContacts($page, $limit)
+  {
+    $contacts = $this->contactsModel->getPaginatedContacts($page, $limit);
+    $totalContacts = $this->contactsModel->getTotalContactsCount(); 
+    echo json_encode([
+      'contacts' => $contacts,
+      'total_contacts' => $totalContacts,
+    ]);
+  }
+
+  public function deleteContact($id)
+  {
+    $result = $this->contactsModel->deleteContact($id);
+    if ($result) {
+      http_response_code(200);
+      echo json_encode([
+        'status' => 'success',
+        'message' => 'Contact deleted successfully'
+      ]);
+    } else {
+      http_response_code(500);
+      echo json_encode([
+        'status' => 'error',
+        'message' => 'Failed to delete contact'
+      ]);
+    }
+  }
 }
