@@ -4,13 +4,12 @@ require_once __DIR__ . '/../controllers/HomeController.php';
 
 function handleTestRoutes($uri)
 {
-  echo 'ok';
-  if ($uri == '/api/test')
-  {
-    echo $uri;
+  if ($uri == '/test') {
+    echo 'ok';
+    return true;
 
   }
   // $homeController = new HomeController();
   // $homeController->index();
-  return true;
+  return false;
 }
