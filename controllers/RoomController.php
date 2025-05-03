@@ -21,6 +21,18 @@ class RoomController
         }
     }
 
+    public function getDetail($id)
+    {
+        try {
+            $room = $this->roomService->getDetail($id);
+            if (!$room) {
+                throw new Exception('Room not found', 404);
+            }
+            echo json_encode(["status" => "success", "data" => $room]);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
     // public function store()
     // {
     //     try {

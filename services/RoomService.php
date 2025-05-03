@@ -19,6 +19,15 @@ class RoomService
     }
   }
  
+  public function getDetail($id)
+  {
+    try {
+      $room = $this->roomModel->getOneById($id);
+      return $room;
+    } catch (Exception $e) {
+      throw new Exception($e->getMessage());
+    }
+  }
  
 }
 ?>

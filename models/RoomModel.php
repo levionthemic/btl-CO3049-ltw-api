@@ -10,19 +10,32 @@ class Room
     $this->conn = Database::getInstance()->getConnection();
   }
 
-  public function getById($id)
+  public function getOneById($id)
   {
-    $sql = "SELECT * FROM rooms WHERE id = ?";
+    $sql = "SELECT *, CAST(rating AS DECIMAL(2,1)) AS rating FROM rooms WHERE id = ?";
     $stmt = $this->conn->prepare($sql);
     $stmt->execute([$id]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
+    $room = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $sql = "SELECT comments.*, users.name, users.avatar
+    FROM comments
+    LEFT JOIN users ON comments.user_id = users.id
+    WHERE comments.room_id = ?";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$id]);
+    $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return [
+      'room' => $room,
+      'comments' => $comments
+    ];
   }
   public function getAll($queryParams = [])
   {
-    $sql = "SELECT * FROM rooms WHERE 1=1";
+    $sql = "SELECT *, CAST(rating AS DECIMAL(2,1)) AS rating FROM rooms WHERE 1=1";
     $params = [];
 
-    if (!empty($filters['guests'])) {
+    if (!empty($queryParams['guests'])) {
       $sql .= " AND max_guests >= ?";
       $params[] = $queryParams['guests'];
     }
