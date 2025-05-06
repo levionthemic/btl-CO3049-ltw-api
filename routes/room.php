@@ -15,10 +15,23 @@ function handleRoomRoutes($uri, $method)
         return true;
     }
 
+    if (count($uriParts) == 3 && $uriParts[1] == 'rooms' && $uriParts[2] == 'booking' && $method == 'POST') {
+        // Uncomment the following line when the store method is implemented
+        $roomController->booking();
+        return true;
+    }
+
     if (count($uriParts) == 4 && $uriParts[1] == 'rooms' && $uriParts[2] == 'detail' && isset($uriParts[3]) && $method == 'GET') {
         // Uncomment the following line when the store method is implemented
         $id = $uriParts[3];
         $roomController->getDetail($id);
+        return true;
+    }
+
+    if (count($uriParts) == 4 && $uriParts[1] == 'rooms' && $uriParts[2] == 'get-booking' && isset($uriParts[3]) && $method == 'GET') {
+        // Uncomment the following line when the store method is implemented
+        $userId = $uriParts[3];
+        $roomController->getRoomBooking($userId);
         return true;
     }
 

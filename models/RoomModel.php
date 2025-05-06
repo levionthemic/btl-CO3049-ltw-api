@@ -30,6 +30,16 @@ class Room
       'comments' => $comments
     ];
   }
+
+  public function getRoomBooking($userId)
+  {
+    $sql = "SELECT bookings.*, rooms.name, rooms.image_url FROM bookings
+    LEFT JOIN rooms ON bookings.room_id = rooms.id
+    WHERE bookings.user_id = ?";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$userId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
   public function getAll($queryParams = [])
   {
     $sql = "SELECT *, CAST(rating AS DECIMAL(2,1)) AS rating FROM rooms WHERE 1=1";
@@ -72,6 +82,22 @@ class Room
     $stmt = $this->conn->prepare($sql);
     $stmt->execute($params);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  }
+
+  public function createBooking($bookingData)
+  {
+    $sql = 'INSERT INTO bookings (user_id, room_id, check_in_date, check_out_date, guests_count, total_price, status) 
+    VALUES (?, ? ,? ,? ,?, ? , ?)';
+
+    $stmt = $this->conn->prepare($sql);
+    $result = $stmt->execute([$bookingData['user_id'], $bookingData['room_id'], $bookingData['check_in_date'], $bookingData['check_out_date'], $bookingData['guests_count'], $bookingData['total_price'], $bookingData['status'],]);
+    
+    if ($result) {
+      return $this->conn->lastInsertId();
+    } else {
+      return false;
+    }
   }
 }
 ?>
