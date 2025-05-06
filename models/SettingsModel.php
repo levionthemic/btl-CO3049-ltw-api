@@ -5,8 +5,7 @@ class SettingsModel {
     private $conn;
 
     public function __construct() {
-        global $conn; // Use the connection from database.php
-        $this->conn = $conn;
+        $this->conn = Database::getInstance()->getConnection();
     }
 
     public function get() {

@@ -16,8 +16,13 @@ class AuthService
   {
     try {
       $user = $this->userModel->findOneByEmail($data['email']);
+
       if (!$user) {
         throw new ApiError("Account not existed!", 403);
+      }
+
+      if (isset($data['role']) && $user['role'] != 'admin') {
+        throw new ApiError("Require Admin!", 403);
       }
 
       if ($user['status'] == 'inactive') {
