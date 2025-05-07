@@ -71,7 +71,7 @@ class AuthController
         );
       }
 
-      
+
 
       unset($response['accessToken']);
       unset($response['refreshToken']);
@@ -156,6 +156,40 @@ class AuthController
       );
 
       echo json_encode(["status" => "success"]);
+    } catch (Exception $e) {
+      throw $e;
+    }
+  }
+
+  public function forgotPassword()
+  {
+    try {
+      header('Content-Type: application/json; charset=utf-8');
+      $input = json_decode(file_get_contents("php://input"), true);
+
+      if (!isset($input['email'])) {
+        throw new ApiError('Missing information', 406);
+      }
+
+      $result = $this->authService->forgotPassword($input);
+      echo json_encode(["status" => "success"]);
+    } catch (Exception $e) {
+      throw $e;
+    }
+  }
+
+  public function verifyCode()
+  {
+    try {
+      header('Content-Type: application/json; charset=utf-8');
+      $input = json_decode(file_get_contents("php://input"), true);
+
+      if (!isset($input['email']) || !isset($input['otp'])) {
+        throw new ApiError('Missing information', 406);
+      }
+
+      $result = $this->authService->verifyCode($input);
+      echo json_encode($result);
     } catch (Exception $e) {
       throw $e;
     }

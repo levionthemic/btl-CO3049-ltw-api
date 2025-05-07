@@ -26,5 +26,15 @@ function handleAuthRoutes($uri, $method)
     return true;
   }
 
+  if ($uri === '/auth/forgot-password' && $method === 'POST') {
+    $authController->forgotPassword();
+    return true;
+  }
+
+  if ($uri === '/auth/verify-code' && $method === 'POST') {
+    $authController->verifyCode();
+    return true;
+  }
+
   return false;
 }
