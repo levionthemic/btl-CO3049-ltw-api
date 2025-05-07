@@ -19,35 +19,59 @@ class AuthController
     try {
       $input = json_decode(file_get_contents("php://input"), true);
 
-      if (!isset($input['email']) || !isset($input['password'])) {
+      if (!isset($input['email']) || !isset($input['password']) || !isset($input['rememberMe'])) {
         throw new ApiError('Missing information', 406);
       }
 
       $response = $this->authService->login($input);
 
-      setcookie(
-        'accessToken',
-        $response['accessToken'],
-        [
-          'expires' => time() + 7 * 24 * 60 * 60,
-          'path' => '/',
-          'secure' => true,
-          'httponly' => true,
-          'samesite' => 'None'
-        ]
-      );
+      if ($input['rememberMe']) {
+        setcookie(
+          'accessToken',
+          $response['accessToken'],
+          [
+            'expires' => time() + 7 * 24 * 60 * 60,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None'
+          ]
+        );
+        setcookie(
+          'refreshToken',
+          $response['refreshToken'],
+          [
+            'expires' => time() + 7 * 24 * 60 * 60,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None'
+          ]
+        );
+      } else {
+        setcookie(
+          'accessToken',
+          $response['accessToken'],
+          [
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None'
+          ]
+        );
+        setcookie(
+          'refreshToken',
+          $response['refreshToken'],
+          [
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None'
+          ]
+        );
+      }
 
-      setcookie(
-        'refreshToken',
-        $response['refreshToken'],
-        [
-          'expires' => time() + 7 * 24 * 60 * 60,
-          'path' => '/',
-          'secure' => true,
-          'httponly' => true,
-          'samesite' => 'None'
-        ]
-      );
+      
 
       unset($response['accessToken']);
       unset($response['refreshToken']);

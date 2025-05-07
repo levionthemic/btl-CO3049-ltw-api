@@ -8,11 +8,20 @@ require_once __DIR__ . '/../config/environment.php';
 
 class AuthMiddleware
 {
+  private static $instance = null;
   private $userModel;
 
-  public function __construct()
+  private function __construct()
   {
     $this->userModel = new User();
+  }
+
+  public static function getInstance()
+  {
+    if (self::$instance === null) {
+      self::$instance = new self();
+    }
+    return self::$instance;
   }
 
   public function authenticate()
@@ -42,3 +51,4 @@ class AuthMiddleware
     return ["status" => "success", "user" => $user];
   }
 }
+
