@@ -39,10 +39,65 @@ class RoomService
     }
   }
 
+  public function updateRoom($data)
+  {
+    try {
+      $res = $this->roomModel->updateOneById($data);
+      return $res;
+    } catch (Exception $e) {
+      throw new Exception($e->getMessage());
+    }
+  }
+
+  public function createRoom($data)
+  {
+    try {
+      $res = $this->roomModel->create($data);
+      return $res;
+    } catch (Exception $e) {
+      throw new Exception($e->getMessage());
+    }
+  }
+
+
+  public function deleteBooking($id)
+  {
+    try {
+      $res = $this->roomModel->deleteBookingById($id);
+      return $res;
+    } catch (Exception $e) {
+      throw new Exception($e->getMessage());
+    }
+  }
+
   public function getRoomBooking($userId)
   {
     try {
       $bookings = $this->roomModel->getRoomBooking($userId);
+      return $bookings;
+    } catch (Exception $e) {
+      throw new Exception($e->getMessage());
+    }
+  }
+
+  public function updateRoomBooking($data)
+  {
+    try {
+      $bookingData = [
+        "id" => $data["id"],
+        "status" => $data["status"]
+      ];
+      $booking = $this->roomModel->updateBooking($bookingData);
+      return $booking;
+    } catch (Exception $e) {
+      throw new Exception($e->getMessage());
+    }
+  }
+
+  public function getAllBookings()
+  {
+    try {
+      $bookings = $this->roomModel->getAllBookings();
       return $bookings;
     } catch (Exception $e) {
       throw new Exception($e->getMessage());

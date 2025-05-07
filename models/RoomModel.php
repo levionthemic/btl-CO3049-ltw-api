@@ -52,6 +52,28 @@ class Room
       return false;
     }
   }
+
+  public function deleteBookingById($id)
+  {
+    try {
+      $sql = "DELETE FROM bookings WHERE id = ?";
+      $stmt = $this->conn->prepare($sql);
+      if (!$stmt) {
+        throw new Exception("Failed to prepare SQL statement");
+      }
+      $res = $stmt->execute([$id]);
+
+      if ($res) {
+        return $stmt->rowCount();
+      } else {
+        return false;
+      }
+    } catch (PDOException $e) {
+      // Ghi log hoặc throw exception tùy mục đích
+      error_log($e->getMessage());
+      return false;
+    }
+  }
   public function getRoomBooking($userId)
   {
     $sql = "SELECT bookings.*, rooms.name, rooms.image_url FROM bookings
@@ -59,6 +81,16 @@ class Room
     WHERE bookings.user_id = ?";
     $stmt = $this->conn->prepare($sql);
     $stmt->execute([$userId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+  public function getAllBookings()
+  {
+    $sql = "SELECT bookings.*, rooms.name AS room_name, rooms.image_url, users.name AS user_name, users.phone FROM bookings
+    LEFT JOIN rooms ON bookings.room_id = rooms.id
+    LEFT JOIN users ON bookings.user_id = users.id";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
   public function getAll($queryParams = [])
@@ -113,6 +145,52 @@ class Room
 
     $stmt = $this->conn->prepare($sql);
     $result = $stmt->execute([$bookingData['user_id'], $bookingData['room_id'], $bookingData['check_in_date'], $bookingData['check_out_date'], $bookingData['guests_count'], $bookingData['total_price'], $bookingData['status'],]);
+
+    if ($result) {
+      return $this->conn->lastInsertId();
+    } else {
+      return false;
+    }
+  }
+
+  public function updateBooking($bookingData)
+  {
+    $sql = 'UPDATE bookings
+    SET status = ?
+    WHERE id = ?';
+
+    $stmt = $this->conn->prepare($sql);
+    $result = $stmt->execute([$bookingData['status'], $bookingData['id']]);
+
+    if ($result) {
+      return $this->conn->lastInsertId();
+    } else {
+      return false;
+    }
+  }
+
+  public function updateOneById($data)
+  {
+    $sql = 'UPDATE rooms
+    SET name = ?, description = ?, price_per_night = ?, max_guests = ?, image_url = ?, rating = ?
+    WHERE id = ?';
+
+    $stmt = $this->conn->prepare($sql);
+    $result = $stmt->execute([$data['name'], $data['description'], $data['price_per_night'], $data['max_guests'], $data['image_url'], $data['rating'], $data['id'],]);
+
+    if ($result) {
+      return $this->conn->lastInsertId();
+    } else {
+      return false;
+    }
+  }
+
+  public function create($data)
+  {
+    $sql = 'INSERT INTO rooms(name, description , price_per_night , max_guests , image_url , rating)
+    VALUES (?,?,?,?,?,?) ';
+    $stmt = $this->conn->prepare($sql);
+    $result = $stmt->execute([$data['name'], $data['description'], $data['price_per_night'], $data['max_guests'], $data['image_url'], $data['rating']]);
 
     if ($result) {
       return $this->conn->lastInsertId();
