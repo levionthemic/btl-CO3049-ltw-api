@@ -51,6 +51,20 @@ class RoomController
         }
     }
 
+    public function deleteRoom($id)
+    {
+        try {
+            if (!is_numeric($id))
+                throw new Exception('Invalid Id', 400);
+
+            $res = $this->roomService->deleteRoom($id);
+
+            echo json_encode(["status" => "success", "data" => $res]);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
     public function booking()
     {
         header('Content-Type: application/json; charset=utf-8');

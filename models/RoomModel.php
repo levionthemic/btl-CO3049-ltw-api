@@ -31,6 +31,27 @@ class Room
     ];
   }
 
+  public function deleteOneById($id)
+  {
+    try {
+      $sql = "DELETE FROM rooms WHERE id = ?";
+      $stmt = $this->conn->prepare($sql);
+      if (!$stmt) {
+        throw new Exception("Failed to prepare SQL statement");
+      }
+      $res = $stmt->execute([$id]);
+
+      if ($res) {
+        return $stmt->rowCount();
+      } else {
+        return false;
+      }
+    } catch (PDOException $e) {
+      // Ghi log hoặc throw exception tùy mục đích
+      error_log($e->getMessage());
+      return false;
+    }
+  }
   public function getRoomBooking($userId)
   {
     $sql = "SELECT bookings.*, rooms.name, rooms.image_url FROM bookings

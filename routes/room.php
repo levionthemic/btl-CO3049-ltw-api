@@ -47,8 +47,13 @@ function handleRoomRoutes($uri, $method)
         return true;
     }
 
-
-
+    // [DELETE]:API_ROOT/api/rooms/delete/:id
+    if (count($uriParts) == 4 && $uriParts[1] == 'rooms' && $uriParts[2] == 'delete' && isset($uriParts[3]) && $method == 'DELETE') {
+        // Uncomment the following line when the store method is implemented
+        $id = $uriParts[3];
+        $roomController->deleteRoom($id);
+        return true;
+    }
     // if ($uri == '/rooms' && $method == 'POST') {
     //     $roomController->store();
     //     return true;

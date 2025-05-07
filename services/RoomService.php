@@ -29,6 +29,16 @@ class RoomService
     }
   }
 
+  public function deleteRoom($id)
+  {
+    try {
+      $res = $this->roomModel->deleteOneById($id);
+      return $res;
+    } catch (Exception $e) {
+      throw new Exception($e->getMessage());
+    }
+  }
+
   public function getRoomBooking($userId)
   {
     try {
