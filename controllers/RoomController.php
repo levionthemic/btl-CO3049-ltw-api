@@ -38,7 +38,7 @@ class RoomController
     {
         try {
             $bookings = $this->roomService->getRoomBooking($userId);
-            
+
             echo json_encode(["status" => "success", "data" => $bookings]);
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
@@ -57,11 +57,27 @@ class RoomController
 
             $response = $this->roomService->booking($input);
             echo json_encode(["status" => "success", "data" => $response]);
-        } catch (\Throwable $th) {
-            //throw $th;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
         }
     }
 
+    public function addReview()
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        try {
+            $input = json_decode(file_get_contents("php://input"), true);
+            if (!isset($input['user_id']) || !isset($input['room_id']) || !isset($input['content']) || !isset($input['rating'])) {
+                throw new ApiError('Missing information', 406);
+            }
+
+            $response = $this->roomService->addReview($input);
+            echo json_encode(["status" => "success", "data" => $response]);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
     // public function store()
     // {
     //     try {

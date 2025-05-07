@@ -57,5 +57,22 @@ class RoomService
       throw new Exception($e->getMessage());
     }
   }
+
+  public function addReview($data)
+  {
+    try {
+      $reviewData = [
+        "user_id" => $data["user_id"],
+        "room_id" => $data["room_id"],
+        "content" => $data["content"],
+        "rating" => $data["rating"]
+      ];
+
+      $response = $this->roomModel->createReview($reviewData);
+      return $response;
+    } catch (Exception $e) {
+      throw new Exception($e->getMessage());
+    }
+  }
 }
 ?>

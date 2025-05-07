@@ -92,9 +92,31 @@ class Room
 
     $stmt = $this->conn->prepare($sql);
     $result = $stmt->execute([$bookingData['user_id'], $bookingData['room_id'], $bookingData['check_in_date'], $bookingData['check_out_date'], $bookingData['guests_count'], $bookingData['total_price'], $bookingData['status'],]);
-    
+
     if ($result) {
       return $this->conn->lastInsertId();
+    } else {
+      return false;
+    }
+  }
+
+  public function createReview($reviewData)
+  {
+    $sql = 'INSERT INTO comments(user_id, room_id, content, rating)
+    VALUES (?,?,?,?)';
+
+    $stmt = $this->conn->prepare($sql);
+    $result = $stmt->execute([$reviewData['user_id'], $reviewData['room_id'], $reviewData['content'], $reviewData['rating']]);
+
+    if ($result) {
+      $lastId = $this->conn->lastInsertId();
+      $sql = "SELECT comments.*, users.name, users.avatar
+    FROM comments
+    LEFT JOIN users ON comments.user_id = users.id
+    WHERE comments.id = ?";
+      $stmt = $this->conn->prepare($sql);
+      $stmt->execute([$lastId]);
+      return $stmt->fetch(PDO::FETCH_ASSOC);
     } else {
       return false;
     }
