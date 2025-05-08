@@ -3,6 +3,12 @@
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../providers/JwtProvider.php';
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
 class AuthService
 {
   private $userModel;
@@ -98,6 +104,88 @@ class AuthService
       );
 
       return ['accessToken' => $accessToken];
+    } catch (Exception $e) {
+      throw $e;
+    }
+  }
+
+  public function forgotPassword($data)
+  {
+    try {
+      $email = $data['email'];
+
+      $user = $this->userModel->findOneByEmail($email);
+      if (!$user) {
+        throw new ApiError("Account not existed!", 403);
+      }
+
+      $otp = rand(100000, 99999999);
+
+      session_start();
+      $_SESSION['otp'] = $otp;
+      $_SESSION['otp_expiry'] = time() + 180; // hết hạn sau 3 phút
+
+      $mail = new PHPMailer(true);
+      // Cấu hình SMTP
+      $mail->isSMTP();
+      $mail->Host       = 'smtp.gmail.com'; // ví dụ dùng Gmail
+      $mail->SMTPAuth   = true;
+      $mail->Username   = $_ENV['EMAIL_USER'];
+      $mail->Password   = $_ENV['EMAIL_PASSWORD']; // dùng App Password nếu Gmail
+      $mail->SMTPSecure = 'tls';
+      $mail->Port       = 587;
+
+      // Nội dung email
+      $mail->setFrom($_ENV['EMAIL_USER'], 'Hotel Booking App');
+      $mail->addAddress($email, $user['name']);
+      $mail->Subject = 'Your OTP Code';
+      $mail->Body    = "Your OTP is: $otp. It will expire in 3 minutes.";
+
+      $mail->send();
+
+      return;
+    } catch (Exception $e) {
+      throw $e;
+    }
+  }
+
+  public function verifyCode($data)
+  {
+    try {
+      session_start();
+
+      $otp = $data['otp'];
+
+      if ($_SESSION['otp'] == $otp && time() < $_SESSION['otp_expiry']) {
+        $userInfo = ['email' => $data['email']];
+        $resetToken = JwtProvider::generateToken(
+          $userInfo,
+          $_ENV['ACCESS_TOKEN_SECRET_SIGNATURE'],
+          10*60
+        );
+        return ["status" => "success", "resetToken" => $resetToken];
+      } else {
+        throw new ApiError("OTP is invalid or expired", 406) ;
+      }
+    } catch (Exception $e) {
+      throw $e;
+    }
+  }
+
+  public function resetPassword($data)
+  {
+    try {
+      $payload = JwtProvider::verify($data['resetToken'], $_ENV['ACCESS_TOKEN_SECRET_SIGNATURE']);
+      $email = $payload->email;
+
+      $user = $this->userModel->findOneByEmail($email);
+      if (!$user) {
+        throw new ApiError('User not found', 406);
+      }
+
+      $result = $this->userModel->updatePassword($data, $user['id']);
+
+      return $result;
     } catch (Exception $e) {
       throw $e;
     }

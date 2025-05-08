@@ -2,15 +2,10 @@
 
 require_once __DIR__ . '/../controllers/HomeController.php';
 
-function handleTestRoutes($uri)
+function handleTestRoutes($uri, $method)
 {
-  echo 'ok';
-  if ($uri == '/api/test')
-  {
-    echo $uri;
-
+  if ($uri === '/test' && $method === 'GET') {
+    return true;
   }
-  // $homeController = new HomeController();
-  // $homeController->index();
-  return true;
+  return false;
 }
