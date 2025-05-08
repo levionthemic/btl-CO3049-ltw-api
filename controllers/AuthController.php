@@ -19,35 +19,59 @@ class AuthController
     try {
       $input = json_decode(file_get_contents("php://input"), true);
 
-      if (!isset($input['email']) || !isset($input['password'])) {
+      if (!isset($input['email']) || !isset($input['password']) || !isset($input['rememberMe'])) {
         throw new ApiError('Missing information', 406);
       }
 
       $response = $this->authService->login($input);
 
-      setcookie(
-        'accessToken',
-        $response['accessToken'],
-        [
-          'expires' => time() + 7 * 24 * 60 * 60,
-          'path' => '/',
-          'secure' => true,
-          'httponly' => true,
-          'samesite' => 'None'
-        ]
-      );
+      if ($input['rememberMe']) {
+        setcookie(
+          'accessToken',
+          $response['accessToken'],
+          [
+            'expires' => time() + 7 * 24 * 60 * 60,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None'
+          ]
+        );
+        setcookie(
+          'refreshToken',
+          $response['refreshToken'],
+          [
+            'expires' => time() + 7 * 24 * 60 * 60,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None'
+          ]
+        );
+      } else {
+        setcookie(
+          'accessToken',
+          $response['accessToken'],
+          [
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None'
+          ]
+        );
+        setcookie(
+          'refreshToken',
+          $response['refreshToken'],
+          [
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None'
+          ]
+        );
+      }
 
-      setcookie(
-        'refreshToken',
-        $response['refreshToken'],
-        [
-          'expires' => time() + 7 * 24 * 60 * 60,
-          'path' => '/',
-          'secure' => true,
-          'httponly' => true,
-          'samesite' => 'None'
-        ]
-      );
+
 
       unset($response['accessToken']);
       unset($response['refreshToken']);
@@ -132,6 +156,57 @@ class AuthController
       );
 
       echo json_encode(["status" => "success"]);
+    } catch (Exception $e) {
+      throw $e;
+    }
+  }
+
+  public function forgotPassword()
+  {
+    try {
+      header('Content-Type: application/json; charset=utf-8');
+      $input = json_decode(file_get_contents("php://input"), true);
+
+      if (!isset($input['email'])) {
+        throw new ApiError('Missing information', 406);
+      }
+
+      $result = $this->authService->forgotPassword($input);
+      echo json_encode(["status" => "success"]);
+    } catch (Exception $e) {
+      throw $e;
+    }
+  }
+
+  public function verifyCode()
+  {
+    try {
+      header('Content-Type: application/json; charset=utf-8');
+      $input = json_decode(file_get_contents("php://input"), true);
+
+      if (!isset($input['email']) || !isset($input['otp'])) {
+        throw new ApiError('Missing information', 406);
+      }
+
+      $result = $this->authService->verifyCode($input);
+      echo json_encode($result);
+    } catch (Exception $e) {
+      throw $e;
+    }
+  }
+
+  public function resetPassword()
+  {
+    try {
+      header('Content-Type: application/json; charset=utf-8');
+      $input = json_decode(file_get_contents("php://input"), true);
+
+      if (!isset($input['password']) || !isset($input['resetToken'])) {
+        throw new ApiError('Missing information', 406);
+      }
+
+      $result = $this->authService->resetPassword($input);
+      echo json_encode($result);
     } catch (Exception $e) {
       throw $e;
     }

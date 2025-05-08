@@ -63,6 +63,18 @@ class User
     }
   }
 
+  public function updatePassword($data, $id)
+  {
+    $stmt = $this->conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+    $result = $stmt->execute([password_hash($data['password'], PASSWORD_BCRYPT), $id]);
+    
+    if ($result) {
+      return $this->findById($id);
+    } else {
+      return false;
+    }
+  }
+
   // Admin 
   public function editUser($data)
   {
