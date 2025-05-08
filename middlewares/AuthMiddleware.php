@@ -19,7 +19,7 @@ class AuthMiddleware
   public static function getInstance()
   {
     if (self::$instance === null) {
-      self::$instance = new self();
+      self::$instance = new AuthMiddleware();
     }
     return self::$instance;
   }

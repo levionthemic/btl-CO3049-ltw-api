@@ -194,4 +194,21 @@ class AuthController
       throw $e;
     }
   }
+
+  public function resetPassword()
+  {
+    try {
+      header('Content-Type: application/json; charset=utf-8');
+      $input = json_decode(file_get_contents("php://input"), true);
+
+      if (!isset($input['password']) || !isset($input['resetToken'])) {
+        throw new ApiError('Missing information', 406);
+      }
+
+      $result = $this->authService->resetPassword($input);
+      echo json_encode($result);
+    } catch (Exception $e) {
+      throw $e;
+    }
+  }
 }

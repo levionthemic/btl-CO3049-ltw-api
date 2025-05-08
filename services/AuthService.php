@@ -161,12 +161,31 @@ class AuthService
         $resetToken = JwtProvider::generateToken(
           $userInfo,
           $_ENV['ACCESS_TOKEN_SECRET_SIGNATURE'],
-          $_ENV['ACCESS_TOKEN_LIFE']
+          10*60
         );
         return ["status" => "success", "resetToken" => $resetToken];
       } else {
         throw new ApiError("OTP is invalid or expired", 406) ;
       }
+    } catch (Exception $e) {
+      throw $e;
+    }
+  }
+
+  public function resetPassword($data)
+  {
+    try {
+      $payload = JwtProvider::verify($data['resetToken'], $_ENV['ACCESS_TOKEN_SECRET_SIGNATURE']);
+      $email = $payload->email;
+
+      $user = $this->userModel->findOneByEmail($email);
+      if (!$user) {
+        throw new ApiError('User not found', 406);
+      }
+
+      $result = $this->userModel->updatePassword($data, $user['id']);
+
+      return $result;
     } catch (Exception $e) {
       throw $e;
     }

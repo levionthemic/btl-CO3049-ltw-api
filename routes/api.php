@@ -14,7 +14,7 @@ function dispatch($uri, $method)
   $uri = str_replace('/api', '', $uri);
 
   if (handleAuthRoutes($uri, $method)) return;
-  if (handleTestRoutes($uri)) {
+  if (handleTestRoutes($uri, $method)) {
     AuthMiddleware::getInstance()->authenticate();
     return;
   }

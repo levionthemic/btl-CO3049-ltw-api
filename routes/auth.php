@@ -36,5 +36,10 @@ function handleAuthRoutes($uri, $method)
     return true;
   }
 
+  if ($uri === '/auth/reset-password' && $method === 'POST') {
+    $authController->resetPassword();
+    return true;
+  }
+
   return false;
 }
