@@ -33,11 +33,12 @@ class Blog
 
     public function createOne($data, $imagePath = null)
     {
-        $stmt = $this->conn->prepare("INSERT INTO news (title, content, image) VALUES (?, ?, ?)");
+        $stmt = $this->conn->prepare("INSERT INTO news (title, content, image, status) VALUES (?, ?, ?, ?)");
         $result = $stmt->execute([
             $data['title'],
             $data['content'],
-            $imagePath
+            $imagePath,
+            $data['status'] ?? 'draft'
         ]);
 
         if ($result) {
@@ -49,13 +50,19 @@ class Blog
 
     public function updatePost($data, $imagePath = null)
     {
-        $stmt = $this->conn->prepare("UPDATE news SET title = ?, content = ?, image = ? WHERE id = ?");
-        $result = $stmt->execute([
-            $data['title'],
-            $data['content'],
-            $imagePath,
-            $data['id']
-        ]);
+        $query = "UPDATE news SET title = ?, content = ?";
+        $params = [$data['title'], $data['content']];
+
+        if ($imagePath !== null) {
+            $query .= ", image = ?";
+            $params[] = $imagePath;
+        }
+
+        $query .= " WHERE id = ?";
+        $params[] = $data['id'];
+
+        $stmt = $this->conn->prepare($query);
+        $result = $stmt->execute($params);
 
         return $result;
     }
