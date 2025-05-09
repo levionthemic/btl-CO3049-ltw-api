@@ -36,18 +36,18 @@ class BlogController {
         }
     }
 
-    public function create($data) {
+    public function create($data, $imagePath = null) {
         try {
-            $this->blogservice->createOne($data);
+            $this->blogservice->createOne($data, $imagePath);
             echo json_encode(['status' => 'success', 'message' => 'Post created']);
         } catch (Exception $e) {
             $this->responseException($e);
         }
     }
 
-    public function update($data) {
+    public function update($data, $imagePath = null) {
         try {
-            $this->blogservice->updatePost($data);
+            $this->blogservice->updatePost($data, $imagePath);
             echo json_encode(['status' => 'success', 'message' => 'Post updated']);
         } catch (Exception $e) {
             $this->responseException($e);

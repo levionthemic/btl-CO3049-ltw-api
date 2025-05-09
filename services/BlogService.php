@@ -36,18 +36,18 @@ class BlogService {
     }
   }
 
-  public function createOne($data) {
+  public function createOne($data, $imagePath = null) {
     try {
-      $response = $this->blogModel->createOne($data);
+      $response = $this->blogModel->createOne($data, $imagePath);
       return $response;
     } catch (Exception $e) {
       throw $e;
     }
   }
 
-  public function updatePost($data) {
+  public function updatePost($data, $imagePath = null) {
     try {
-      $response = $this->blogModel->updatePost($data);
+      $response = $this->blogModel->updatePost($data, $imagePath);
       return $response;
     } catch (Exception $e) {
       throw $e;
