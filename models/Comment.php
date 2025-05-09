@@ -10,7 +10,13 @@ class Comment {
     }
 
     public function getByNews($news_id) {
-        $stmt = $this->conn->prepare("SELECT * FROM news_comments WHERE news_id = ? ORDER BY created_at ASC");
+        $stmt = $this->conn->prepare("
+            SELECT c.*, u.name
+            FROM news_comments c
+            LEFT JOIN users u ON c.user_id = u.id
+            WHERE c.news_id = ? 
+            ORDER BY c.created_at ASC
+        ");
         $stmt->execute([$news_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -34,9 +40,9 @@ class Comment {
             return false;
         }
     }
+
     public function deleteOne($id) {
         $stmt = $this->conn->prepare("DELETE FROM news_comments WHERE id = ?");
         return $stmt->execute([$id]);
     }
-    
 }
