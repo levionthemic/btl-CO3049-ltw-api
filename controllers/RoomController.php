@@ -101,7 +101,8 @@ class RoomController
                 if (!move_uploaded_file($file['tmp_name'], $filePath)) {
                     throw new Exception("Failed to move uploaded file.");
                 }
-
+                if (!isset($_POST['name']) || !isset($_POST['description']) || !isset($_POST['price_per_night']) || !isset($_POST['max_guests']) || !isset($_POST['rating']))
+                    throw new Exception("Missing infomation");
                 $updateData = [
                     "image_url" => "/uploads/" . $fileName,
                     "id" => $id,
@@ -313,58 +314,5 @@ class RoomController
             throw new Exception($e->getMessage());
         }
     }
-    // public function store()
-    // {
-    //     try {
-    //         $input = json_decode(file_get_contents("php://input"), true);
-
-    //         if (!isset($input['name']) || !isset($input['capacity'])) {
-    //             throw new ApiError('Missing information', 406);
-    //         }
-
-    //         $response = $this->roomService->createRoom($input);
-
-    //         echo json_encode(["status" => "success", "data" => $response]);
-    //     } catch (Exception $e) {
-    //         throw new Exception($e->getMessage());
-    //     }
-    // }
-
-    // public function show($id)
-    // {
-    //     try {
-    //         $room = $this->roomService->getRoomById($id);
-    //         echo json_encode(["status" => "success", "data" => $room]);
-    //     } catch (Exception $e) {
-    //         throw new Exception($e->getMessage());
-    //     }
-    // }
-
-    // public function update($id)
-    // {
-    //     try {
-    //         $input = json_decode(file_get_contents("php://input"), true);
-
-    //         if (!isset($input['name']) || !isset($input['capacity'])) {
-    //             throw new ApiError('Missing information', 406);
-    //         }
-
-    //         $response = $this->roomService->updateRoom($id, $input);
-
-    //         echo json_encode(["status" => "success", "data" => $response]);
-    //     } catch (Exception $e) {
-    //         throw new Exception($e->getMessage());
-    //     }
-    // }
-
-    // public function destroy($id)
-    // {
-    //     try {
-    //         $this->roomService->deleteRoom($id);
-    //         echo json_encode(["status" => "success"]);
-    //     } catch (Exception $e) {
-    //         throw new Exception($e->getMessage());
-    //     }
-    // }
 }
 ?>
