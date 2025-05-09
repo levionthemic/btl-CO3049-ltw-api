@@ -33,12 +33,11 @@ class Blog
 
     public function createOne($data, $imagePath = null)
     {
-        $stmt = $this->conn->prepare("INSERT INTO news (title, content, image, status) VALUES (?, ?, ?, ?)");
+        $stmt = $this->conn->prepare("INSERT INTO news (title, content, image) VALUES (?, ?, ?, ?)");
         $result = $stmt->execute([
             $data['title'],
             $data['content'],
             $imagePath,
-            $data['status'] ?? 'draft'
         ]);
 
         if ($result) {

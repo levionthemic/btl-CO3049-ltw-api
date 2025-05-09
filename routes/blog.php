@@ -87,10 +87,16 @@ function handleBlogRoutes($uri, $method)
 }
 
   // PUT /blog/{id} → cập nhật
-  if (preg_match('#^/blog/(\d+)$#', $uri, $matches) && $method === 'PUT') {
+  if (
+    preg_match('#^/blog/(\d+)$#', $uri, $matches)
+    && $method === 'POST'
+    && isset($_POST['_method'])
+    && strtoupper($_POST['_method']) === 'PUT'
+) {
     $data = [
         'title' => $_POST['title'] ?? '',
         'content' => $_POST['content'] ?? '',
+        'status' => $_POST['status'] ?? '',
         'id' => $matches[1]
     ];
 
