@@ -22,7 +22,7 @@ class Comment {
         ");
 
         $result = $stmt->execute([
-            $data['post_id'],
+            $data['news_id'],
             $data['user_id'],
             $data['content'],
             $data['parent_id'] ?? null

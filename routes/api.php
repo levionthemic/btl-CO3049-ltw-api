@@ -31,9 +31,9 @@ function dispatch($uri, $method)
   
   if (handleSettingsRoutes($uri, $method)) return;
   if (handleBlogRoutes($uri, $method)) return; 
-  
-  if (handleContactsRoutes($uri, $method)) return;
   if (handleCommentRoutes($uri, $method)) return; 
+  if (handleContactsRoutes($uri, $method)) return;
+  
 
   http_response_code(404);
   echo json_encode(["error" => "API route not found"]);

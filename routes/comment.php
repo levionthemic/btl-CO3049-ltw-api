@@ -7,14 +7,14 @@ function handleCommentRoutes($uri, $method)
   $commentController = new CommentController();
 
   // Lấy tất cả bình luận theo bài viết
-  if (preg_match('#^/news/(\d+)/comments$#', $uri, $matches) && $method === 'GET') {
+  if (preg_match('#^/blog/(\d+)/comments$#', $uri, $matches) && $method === 'GET') {
     $newsId = $matches[1];
     $commentController->getByNews($newsId);
     return true;
   }
 
   // Thêm bình luận cho bài viết
-  if (preg_match('#^/news/(\d+)/comments$#', $uri, $matches) && $method === 'POST') {
+  if (preg_match('#^/blog/(\d+)/comments$#', $uri, $matches) && $method === 'POST') {
     $data = json_decode(file_get_contents("php://input"), true);
     $data['news_id'] = (int)$matches[1];
     $commentController->create($data);
